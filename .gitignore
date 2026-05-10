@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Runtime data (contains private keys and forum state)
+data/
+data-node-*/
+
+# Logs
+*.log
+*.jsonl
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Backups
+backup/
+
+# Editor / IDE
+.claude/settings.json
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

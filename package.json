@@ -1,0 +1,13 @@
+{
+  "name": "meshforum",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Forum over Meshtastic direct messages.",
+  "scripts": {
+    "start": "node scripts/start-two.js",
+    "start-single": "node server.js"
+  },
+  "dependencies": {
+    "@fontsource/press-start-2p": "^5.2.7"
+  }
+}

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOARD</title>
+  <meta name="description" content="BLACKBOX BOARD — Meshtastic mesh network board">
+  <meta name="application-name" content="BLACKBOX BOARD">
+  <link rel="icon" type="image/png" href="/ico.png">
+  <link rel="shortcut icon" type="image/png" href="/ico.png">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+
+    <header class="hero card">
+      <div class="hero-main">
+        <div class="hero-title-group">
+          <img id="bb-logo" src="/logo.svg" alt="Blackbox logo" aria-hidden="true">
+          <h1>BLACK<span class="bb-green">BOX</span> BOARD</h1>
+        </div>
+        <div class="hero-status-strip">
+          <div class="hero-status-item">
+            <span class="hero-status-dot" id="mesh-status-dot">◎</span>
+            <div class="hero-status-lines">
+              <span class="hero-status-label">MESHTASTIC</span>
+              <span id="hero-mesh-info" class="hero-status-value">disconnected</span>
+            </div>
+          </div>
+          <div class="hero-status-sep"></div>
+          <div class="hero-status-item">
+            <span class="hero-status-dot">⬡</span>
+            <div class="hero-status-lines">
+              <span class="hero-status-label">SYNC PEER</span>
+              <span id="hero-bootstrap-node" class="hero-status-value">none</span>
+            </div>
+          </div>
+          <div class="hero-status-sep"></div>
+          <form id="profile-form" class="hero-profile-form">
+            <span class="hero-status-label">PROFILE</span>
+            <input id="display-name" name="displayName" maxlength="24" autocomplete="off" placeholder="nick…">
+            <button type="submit">SAVE</button>
+          </form>
+          <div class="hero-status-sep"></div>
+          <button id="refresh-nodes" class="btn-outline" type="button">⟳ REFRESH</button>
+          <button id="theme-toggle" class="btn-outline" type="button" title="Toggle theme">◑ THEME</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <article class="card forum-panel">
+        <div class="panel-tab">/FORUM</div>
+
+        <div class="forum-head">
+          <div>
+            <h2>CREATE TOPIC</h2>
+          </div>
+          <div class="forum-head-actions">
+            <div id="sync-progress" class="sync-progress hidden">
+              <span id="sync-progress-label" class="sync-label">Syncing…</span>
+              <div class="sync-bar-wrap">
+                <div class="sync-bar-fill" id="sync-bar-fill"></div>
+              </div>
+              <span id="sync-progress-counter" class="sync-counter">0/0</span>
+            </div>
+            <div id="inbound-progress" class="inbound-progress hidden">
+              <span id="inbound-label" class="inbound-label">Receiving…</span>
+              <div class="sync-bar-wrap inbound-bar-wrap">
+                <div class="sync-bar-fill inbound-bar-fill" id="inbound-bar-fill"></div>
+              </div>
+              <span id="inbound-progress-counter" class="sync-counter">0/0</span>
+            </div>
+            <button id="sync-selected" class="btn-outline" type="button">⇅ SYNC PEER</button>
+          </div>
+        </div>
+
+        <div class="new-topic card-inset">
+          <p class="inset-label">NEW TOPIC</p>
+          <form id="new-topic-form" class="new-topic-form">
+            <input id="new-topic-title" maxlength="120" placeholder="Topic title...">
+            <textarea id="new-topic-body" maxlength="1200" placeholder="Post body..."></textarea>
+            <button type="submit">CREATE</button>
+          </form>
+        </div>
+
+        <div class="forum-body">
+          <section class="topics-column">
+            <div class="subpanel-tab">/TOPICS</div>
+            <div class="col-head">
+              <h3 id="topic-count">0 topics</h3>
+            </div>
+            <div id="topics" class="scroll-pane topics empty">No topics yet.</div>
+          </section>
+
+          <section class="thread-column">
+            <div class="subpanel-tab">/THREAD</div>
+            <div class="col-head">
+              <h3 id="thread-title">Select a topic</h3>
+            </div>
+            <div id="posts" class="scroll-pane posts empty">No topic selected.</div>
+            <form id="reply-form" class="reply-form">
+              <textarea id="reply-body" maxlength="1200" placeholder="Write a reply…"></textarea>
+              <button id="reply-submit" type="submit" disabled>REPLY</button>
+            </form>
+          </section>
+        </div>
+      </article>
+
+      <aside class="sidebar">
+        <article class="card nodes-panel">
+          <div class="panel-tab">/PEERS</div>
+          <div class="col-head nodes-head">
+            <h2>SYNC PEER</h2>
+            <span id="node-count" class="pill">0 nodes</span>
+          </div>
+          <div id="nodes" class="scroll-pane nodes empty">No nodes discovered yet.</div>
+        </article>
+
+        <article class="card logs-panel">
+          <div class="panel-tab">/LOGS</div>
+          <div class="col-head">
+            <h2>ACTIVITY</h2>
+          </div>
+          <div id="logs" class="scroll-pane logs empty">No events yet.</div>
+        </article>
+      </aside>
+    </section>
+
+    <footer class="command-bar card">
+      <span class="command-prompt">==&gt;</span>
+      <div class="command-buttons">
+        <button id="cmd-refresh"      type="button">F1 Refresh</button>
+        <button id="cmd-sync"         type="button">F2 Sync</button>
+        <button id="cmd-save-profile" type="button">F3 Save</button>
+        <button id="cmd-create-topic" type="button">F4 New Topic</button>
+        <button id="cmd-reply"        type="button">F5 Reply</button>
+      </div>
+      <div id="footer-status" class="footer-status">READY</div>
+    </footer>
+
+  </main>
+  <script src="/app-retro.js"></script>
+  <script>
+    (function() {
+      var THEME_KEY = 'bb-forum-theme';
+      var saved = localStorage.getItem(THEME_KEY) || 'retro';
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-toggle').addEventListener('click', function() {
+        var cur = document.documentElement.getAttribute('data-theme');
+        var next = cur === 'blackbox' ? 'retro' : 'blackbox';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem(THEME_KEY, next);
+      });
+    })();
+  </script>
+</body>
+</html>
